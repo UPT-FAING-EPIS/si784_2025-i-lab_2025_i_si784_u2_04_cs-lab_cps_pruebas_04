@@ -1,0 +1,34 @@
+name: Publish Documentation
+
+on:
+  push:
+    branches:
+      - main  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Instalar .NET SDK 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Instalar DocFX
+        run: dotnet tool install -g docfx
+
+      - name: Agregar dotnet tools al PATH
+        run: echo "${{ env.HOME }}/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Generar documentación
+        working-directory: docfx_project
+        run: docfx docfx.json
+
+      - name: Publicar en GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} 
+          publish_dir: ./docfx_project/_site

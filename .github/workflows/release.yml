@@ -1,0 +1,83 @@
+name: Release NuGet Package
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    env:
+      PACKAGE_OUTPUT_DIRECTORY: ./nupkg
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Configurar .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Extraer versión desde el csproj
+        id: extract_version
+        run: |
+          echo "Contenido del archivo csproj:"
+          cat EcommerceApp/EcommerceApp.Api/EcommerceApp.Api.csproj
+
+          VERSION=$(grep -oP '(?<=<Version>).*(?=</Version>)' EcommerceApp/EcommerceApp.Api/EcommerceApp.Api.csproj | head -n 1)
+          echo "Versión encontrada: $VERSION"
+
+          if [ -z "$VERSION" ]; then
+            echo "Error: No se pudo extraer la versión del archivo csproj"
+            exit 1
+          fi
+
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Crear carpeta para paquetes
+        run: mkdir -p ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
+      - name: Restaurar dependencias
+        run: dotnet restore ./EcommerceApp/EcommerceApp.Api/EcommerceApp.Api.csproj
+
+      - name: Empaquetar NuGet
+        run: |
+          dotnet pack ./EcommerceApp/EcommerceApp.Api/EcommerceApp.Api.csproj \
+            --configuration Release \
+            -p:PackageVersion=${{ env.VERSION }} \
+            -o ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
+      - name: Listar paquetes NuGet generados
+        run: ls -la ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
+      - name: Configurar NuGet para GitHub Packages
+        run: |
+          dotnet nuget remove source github || echo "No existe fuente github"
+          dotnet nuget add source "https://nuget.pkg.github.com/mayrafc/index.json" \
+            --name github \
+            --username ${{ github.actor }} \
+            --password ${{ secrets.NUGET_TOKEN }} \
+            --store-password-in-clear-text
+
+      - name: Subir paquete a GitHub Packages
+        run: |
+          dotnet nuget push "${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg" \
+            --api-key ${{ secrets.NUGET_TOKEN }} \
+            --source github \
+            --skip-duplicate
+
+      - name: Crear Release en GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          files: ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
