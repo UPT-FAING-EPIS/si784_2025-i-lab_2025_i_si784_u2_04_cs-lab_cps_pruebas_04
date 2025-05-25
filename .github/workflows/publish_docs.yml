@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      PATH: ${{ env.PATH }}:${{ github.workspace }}/docfx
 
     steps:
       - name: Checkout code
@@ -22,13 +24,12 @@ jobs:
         run: |
           wget https://github.com/dotnet/docfx/releases/download/v2.58.9/docfx.zip
           unzip docfx.zip -d docfx
-          export PATH=$PATH:$(pwd)/docfx
 
       - name: Generate Documentation
         working-directory: docfx_project
         run: |
-          ./docfx metadata
-          ./docfx build
+          docfx metadata
+          docfx build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
