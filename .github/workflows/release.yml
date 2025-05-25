@@ -30,11 +30,11 @@ jobs:
         run: echo "VERSION=${{ env.MATRICULA_VERSION }}" >> $GITHUB_ENV
 
       - name: Restaurar dependencias
-        run: dotnet restore ./EcommerceApp/EcommerceApp.sln
+        run: dotnet restore ./EcommerceApp/EcommerceApp.Api/EcommerceApp.Api.csproj
 
       - name: Empaquetar NuGet
         run: |
-          dotnet pack ./EcommerceApp/EcommerceApp.Lib/EcommerceApp.Lib.csproj \
+          dotnet pack ./EcommerceApp/EcommerceApp.Api/EcommerceApp.Api.csproj \
             --configuration Release \
             -p:PackageVersion=${{ env.VERSION }} \
             -o ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
@@ -56,10 +56,10 @@ jobs:
             --skip-duplicate
 
       - name: Crear Release en GitHub
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.VERSION }}
           name: Release v${{ env.VERSION }}
           files: ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

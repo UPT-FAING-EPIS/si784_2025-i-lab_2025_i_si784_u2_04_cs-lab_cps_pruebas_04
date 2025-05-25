@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcommerceApp.Api", "Ecommer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcommerceApp.Tests", "EcommerceApp.Tests\EcommerceApp.Tests.csproj", "{68CE2422-C722-4385-9431-ED0B5420EE74}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EcommerceApp", "EcommerceApp", "{8A0A226E-7BD4-8F46-0159-D913A394D4DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcommerceApp.Core", "EcommerceApp\EcommerceApp.Core\EcommerceApp.Core.csproj", "{5F849480-7850-42F7-8E61-6F8A28D53391}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,8 +45,23 @@ Global
 		{68CE2422-C722-4385-9431-ED0B5420EE74}.Release|x64.Build.0 = Release|Any CPU
 		{68CE2422-C722-4385-9431-ED0B5420EE74}.Release|x86.ActiveCfg = Release|Any CPU
 		{68CE2422-C722-4385-9431-ED0B5420EE74}.Release|x86.Build.0 = Release|Any CPU
+		{5F849480-7850-42F7-8E61-6F8A28D53391}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F849480-7850-42F7-8E61-6F8A28D53391}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F849480-7850-42F7-8E61-6F8A28D53391}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5F849480-7850-42F7-8E61-6F8A28D53391}.Debug|x64.Build.0 = Debug|Any CPU
+		{5F849480-7850-42F7-8E61-6F8A28D53391}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5F849480-7850-42F7-8E61-6F8A28D53391}.Debug|x86.Build.0 = Debug|Any CPU
+		{5F849480-7850-42F7-8E61-6F8A28D53391}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F849480-7850-42F7-8E61-6F8A28D53391}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F849480-7850-42F7-8E61-6F8A28D53391}.Release|x64.ActiveCfg = Release|Any CPU
+		{5F849480-7850-42F7-8E61-6F8A28D53391}.Release|x64.Build.0 = Release|Any CPU
+		{5F849480-7850-42F7-8E61-6F8A28D53391}.Release|x86.ActiveCfg = Release|Any CPU
+		{5F849480-7850-42F7-8E61-6F8A28D53391}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5F849480-7850-42F7-8E61-6F8A28D53391} = {8A0A226E-7BD4-8F46-0159-D913A394D4DB}
 	EndGlobalSection
 EndGlobal

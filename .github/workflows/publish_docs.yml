@@ -3,8 +3,7 @@ name: Publish Documentation
 on:
   push:
     branches:
-      - main  # o la rama principal que uses
-
+      - main  
 jobs:
   build:
     runs-on: ubuntu-latest
