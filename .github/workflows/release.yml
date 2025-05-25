@@ -34,7 +34,7 @@ jobs:
 
       - name: Empaquetar NuGet
         run: |
-          dotnet pack ./EcommerceApp/EcommerceApp.csproj \
+          dotnet pack ./EcommerceApp/EcommerceApp.Lib/EcommerceApp.Lib.csproj \
             --configuration Release \
             -p:PackageVersion=${{ env.VERSION }} \
             -o ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
@@ -62,4 +62,4 @@ jobs:
           name: Release v${{ env.VERSION }}
           files: ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
