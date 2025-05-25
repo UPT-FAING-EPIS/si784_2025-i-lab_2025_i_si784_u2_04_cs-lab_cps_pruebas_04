@@ -15,7 +15,6 @@ jobs:
 
     env:
       PACKAGE_OUTPUT_DIRECTORY: ./nupkg
-      MATRICULA_VERSION: "202312345"
 
     steps:
       - name: Checkout del código
@@ -26,8 +25,21 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Establecer versión del paquete
-        run: echo "VERSION=${{ env.MATRICULA_VERSION }}" >> $GITHUB_ENV
+      - name: Extraer versión desde el csproj
+        id: extract_version
+        run: |
+          echo "Contenido del archivo csproj:"
+          cat EcommerceApp/EcommerceApp.Api/EcommerceApp.Api.csproj
+
+          VERSION=$(grep -oP '(?<=<Version>).*(?=</Version>)' EcommerceApp/EcommerceApp.Api/EcommerceApp.Api.csproj | head -n 1)
+          echo "Versión encontrada: $VERSION"
+
+          if [ -z "$VERSION" ]; then
+            echo "Error: No se pudo extraer la versión del archivo csproj"
+            exit 1
+          fi
+
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Restaurar dependencias
         run: dotnet restore ./EcommerceApp/EcommerceApp.Api/EcommerceApp.Api.csproj
@@ -38,6 +50,9 @@ jobs:
             --configuration Release \
             -p:PackageVersion=${{ env.VERSION }} \
             -o ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
+      - name: Listar paquetes NuGet generados
+        run: ls -la ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
       - name: Configurar NuGet para GitHub Packages
         run: |
