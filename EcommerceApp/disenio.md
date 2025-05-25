@@ -1,39 +1,43 @@
 ```mermaid
 classDiagram
 
-class ICartService
-ICartService : +Total() Double
-ICartService : +Items() IEnumerable~ICartItem~
+class ICartService {
+  +Total() Double
+  +Items() IEnumerable~ICartItem~
+}
 
-class IDiscountService
-IDiscountService : +ApplyDiscount() Double
+class IDiscountService {
+  +ApplyDiscount() Double
+}
 
-class IPaymentService
-IPaymentService : +Charge() Boolean
+class IPaymentService {
+  +Charge() Boolean
+}
 
-class IShipmentService
-IShipmentService : +Ship() Void
+class IShipmentService {
+  +Ship() Void
+}
 
-class IAddressInfo
-IAddressInfo : +String Street
-IAddressInfo : +String Address
-IAddressInfo : +String City
-IAddressInfo : +String PostalCode
-IAddressInfo : +String PhoneNumber
+class IAddressInfo {
+  +Street String
+  +Address String
+  +City String
+  +PostalCode String
+  +PhoneNumber String
+}
 
-class ICard
-ICard : +String CardNumber
-ICard : +String Name
-ICard : +DateTime ValidTo
+class ICard {
+  +CardNumber String
+  +Name String
+  +ValidTo DateTime
+}
 
-class ICartItem
-ICartItem : +String ProductId
-ICartItem : +Int Quantity
-ICartItem : +Double Price
+class ICartItem {
+  +ProductId String
+  +Quantity Int
+  +Price Double
+}
 
-class CartController
-CartController : +CheckOut() String
-
-
-
-```
+class CartController {
+  +CheckOut() String
+}
