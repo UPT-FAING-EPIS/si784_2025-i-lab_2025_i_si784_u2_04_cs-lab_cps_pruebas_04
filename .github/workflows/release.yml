@@ -51,8 +51,19 @@ jobs:
             -p:PackageVersion=${{ env.VERSION }} \
             -o ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
+            - name: Crear carpeta para paquetes
+        run: mkdir -p ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
+      - name: Empaquetar NuGet
+        run: |
+          dotnet pack ./EcommerceApp/EcommerceApp.Api/EcommerceApp.Api.csproj \
+            --configuration Release \
+            -p:PackageVersion=${{ env.VERSION }} \
+            -o ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
       - name: Listar paquetes NuGet generados
         run: ls -la ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
 
       - name: Configurar NuGet para GitHub Packages
         run: |
