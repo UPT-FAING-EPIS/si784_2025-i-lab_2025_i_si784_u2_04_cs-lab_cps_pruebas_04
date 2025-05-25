@@ -1,0 +1,68 @@
+name: Release NuGet Package
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # Para crear releases
+      packages: write   # Para publicar paquetes NuGet
+
+    env:
+      PACKAGE_OUTPUT_DIRECTORY: ./nupkg
+      # Aquí defines tu código de matrícula (ejemplo: 202312345)
+      MATRICULA_VERSION: "202312345"
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Configurar .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      # Opcional: Extraer versión desde csproj, o usar matrícula como versión fija
+      # Aquí vamos a usar la matrícula directamente:
+      - name: Establecer versión del paquete
+        run: echo "VERSION=${{ env.MATRICULA_VERSION }}" >> $GITHUB_ENV
+
+      - name: Restaurar dependencias
+        run: dotnet restore ./EcommerceApp/EcommerceApp.sln
+
+      - name: Empaquetar NuGet
+        run: |
+          dotnet pack ./EcommerceApp/EcommerceApp.csproj \
+            --configuration Release \
+            -p:PackageVersion=${{ env.VERSION }} \
+            -o ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
+            - name: Configurar NuGet para GitHub Packages
+        run: |
+          dotnet nuget remove source github || echo "No existe fuente github"
+          dotnet nuget add source "https://nuget.pkg.github.com/mayrafc/index.json" \
+            --name github \
+            --username ${{ github.actor }} \
+            --password ${{ secrets.NUGET_TOKEN }} \
+            --store-password-in-clear-text
+
+      - name: Subir paquete a GitHub Packages
+        run: |
+          dotnet nuget push "${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg" \
+            --api-key ${{ secrets.NUGET_TOKEN }} \
+            --source github \
+            --skip-duplicate
+
+
+      - name: Crear Release en GitHub
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          files: ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg
+          token: ${{ secrets.GITHUB_TOKEN }}

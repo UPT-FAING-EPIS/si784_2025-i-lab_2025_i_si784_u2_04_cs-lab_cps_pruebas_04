@@ -1,10 +1,9 @@
-name: Publish Coverage Report
+name: Publish Documentation
 
 on:
   push:
     branches:
-      - main
-  pull_request:
+      - main  # o la rama principal que uses
 
 jobs:
   build:
@@ -14,35 +13,23 @@ jobs:
       - name: Clonar repositorio
         uses: actions/checkout@v3
 
-      - name: Instalar .NET SDK
-        uses: actions/setup-dotnet@v3
+      - name: Instalar .NET SDK 8
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: '8.0.x'
 
-      - name: Restaurar dependencias
-        run: dotnet restore ./EcommerceApp/EcommerceApp.sln
+      - name: Instalar DocFX
+        run: dotnet tool install -g docfx
 
-      - name: Compilar solución
-        run: dotnet build ./EcommerceApp/EcommerceApp.sln --no-restore --configuration Release
+      - name: Agregar dotnet tools al PATH
+        run: echo "${{ env.HOME }}/.dotnet/tools" >> $GITHUB_PATH
 
-      - name: Ejecutar pruebas con cobertura
-        run: |
-          dotnet test ./EcommerceApp/EcommerceApp.Tests/EcommerceApp.Tests.csproj \
-            --no-build --configuration Release \
-            --collect:"XPlat Code Coverage"
-
-      - name: Instalar ReportGenerator
-        run: dotnet tool install -g dotnet-reportgenerator-globaltool
-
-      - name: Generar reporte HTML
-        run: |
-          reportgenerator \
-            -reports:"./EcommerceApp/EcommerceApp.Tests/TestResults/**/coverage.cobertura.xml" \
-            -targetdir:coverage-report \
-            -reporttypes:Html
+      - name: Generar documentación
+        working-directory: docfx_project
+        run: docfx docfx.json
 
       - name: Publicar en GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./coverage-report
+          github_token: ${{ secrets.GITHUB_TOKEN }} 
+          publish_dir: ./docfx_project/_site
