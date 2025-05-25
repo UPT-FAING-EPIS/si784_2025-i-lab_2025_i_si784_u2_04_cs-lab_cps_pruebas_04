@@ -3,7 +3,7 @@ name: Publish Docs
 on:
   push:
     branches:
-      - main  # o la rama que uses
+      - main  # Cambia si usas otra rama principal
 
 jobs:
   build:
@@ -28,8 +28,8 @@ jobs:
       - name: Generate Documentation
         working-directory: docfx_project
         run: |
-          docfx metadata
-          docfx build
+          ../docfx/docfx metadata
+          ../docfx/docfx build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
